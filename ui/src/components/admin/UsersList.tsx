@@ -1,56 +1,63 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Card } from "../Card";
 import { API_BASE } from "../../constants";
 import type { User } from "../../types";
 
 async function json<T>(res: Response): Promise<T> {
-  if (!res.ok) {
-    const text = await res.text().catch(() => "");
-    throw new Error(text || `HTTP ${res.status}`);
-  }
-  return res.json();
+	if (!res.ok) {
+		const text = await res.text().catch(() => "");
+		throw new Error(text || `HTTP ${res.status}`);
+	}
+	return res.json();
 }
 
 export function UsersList() {
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+	const [users, setUsers] = useState<User[]>([]);
+	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState<string | null>(null);
 
-  const refresh = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch(`${API_BASE}/users`);
-      const data = await json<{ data: User[] }>(res);
-      setUsers(data.data);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+	const refresh = async () => {
+		setLoading(true);
+		setError(null);
+		try {
+			const res = await fetch(`${API_BASE}/users`);
+			const data = await json<{ data: User[] }>(res);
+			setUsers(data.data);
+		} catch (err: any) {
+			setError(err.message);
+		} finally {
+			setLoading(false);
+		}
+	};
 
-  useEffect(() => { refresh(); }, []);
+	useEffect(() => {
+		refresh();
+	}, []);
 
-  return (
-    <Card title="Users (id, name)">
-      <div className="flex items-center gap-2 mb-2">
-        <button onClick={refresh} className="px-3 py-1 rounded-lg bg-white border border-gray-300 hover:bg-gray-50">Refresh</button>
-        {loading && <span className="text-xs text-gray-500">Loading...</span>}
-      </div>
-      {error && <p className="text-sm text-red-700 mb-2">{error}</p>}
-      <ul className="divide-y">
-        {users.map((u) => (
-          <li key={u.id} className="py-2 flex items-center justify-between">
-            <span className="font-mono text-xs md:text-sm">{u.id}</span>
-            <span>{" "}</span>
-            <span className="text-sm md:text-base">{u.name}</span>
-          </li>
-        ))}
-        {users.length === 0 && !loading && <li className="py-2 text-sm text-gray-500">No users yet.</li>}
-      </ul>
-    </Card>
-  );
+	return (
+		<Card title="Users (id, name)">
+			<div className="flex items-center gap-2 mb-2">
+				<button
+					onClick={refresh}
+					className="px-3 py-1 rounded-lg bg-white border border-gray-300 hover:bg-gray-50"
+				>
+					Refresh
+				</button>
+				{loading && <span className="text-xs text-gray-500">Loading...</span>}
+			</div>
+			{error && <p className="text-sm text-red-700 mb-2">{error}</p>}
+			<ul className="divide-y">
+				{users.map((u) => (
+					<li key={u.id} className="py-2 flex items-center justify-between">
+						<span className="font-mono text-xs md:text-sm">{u.id}</span>
+						<span> </span>
+						<span className="text-sm md:text-base">{u.name}</span>
+					</li>
+				))}
+				{users.length === 0 && !loading && (
+					<li className="py-2 text-sm text-gray-500">No users yet.</li>
+				)}
+			</ul>
+		</Card>
+	);
 }
-
-

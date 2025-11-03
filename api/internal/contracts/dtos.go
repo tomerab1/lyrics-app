@@ -42,8 +42,6 @@ type CreateLessonResponse struct {
 	Items    []LessonItem `json:"items"`
 }
 
-// --- Answers & Summary ---
-
 type SubmitAnswerDto struct {
 	LessonId  string `json:"lessonId"`
 	ItemIndex int    `json:"itemIndex"`

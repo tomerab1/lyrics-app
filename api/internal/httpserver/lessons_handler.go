@@ -35,6 +35,7 @@ func submitAnswer(app *app.Application) http.HandlerFunc {
 			app.WriteErrorJSON(w, http.StatusBadRequest, fmt.Sprintf("invalid body: %v", err))
 			return
 		}
+
 		correct, err := app.LessonSvc.SubmitAnswer(r.Context(), dto.LessonId, dto.ItemIndex, dto.Type, dto.UserInput)
 		if err != nil {
 			if err == services.ErrDuplicateAnswer {
@@ -44,10 +45,8 @@ func submitAnswer(app *app.Application) http.HandlerFunc {
 			app.WriteErrorJSON(w, http.StatusBadRequest, fmt.Sprintf("failed to submit answer: %v", err))
 			return
 		}
-		// Return bare JSON per spec
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(contracts.SubmitAnswerResponse{Ok: true, Correct: correct})
+
+		app.WriteJSON(w, http.StatusOK, contracts.SubmitAnswerResponse{Ok: true, Correct: correct})
 	}
 }
 
@@ -67,9 +66,7 @@ func lessonSummary(app *app.Application) http.HandlerFunc {
 			Accuracy:               acc,
 			ScheduledForRepractice: scheduled,
 		}
-		// For summary endpoint spec, response is bare JSON not wrapped
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(resp)
+
+		app.WriteJSON(w, http.StatusOK, resp)
 	}
 }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { API_BASE } from "../constants";
 import type { Lesson, Summary } from "../types";
 import { StartLessonForm } from "./lesson/StartLessonForm";
@@ -44,8 +44,8 @@ export function LessonPanel() {
 	const onFinishedLesson = async () => {
 		if (!lesson) return;
 		const res = await fetch(`${API_BASE}/lessons/${lesson.lessonId}/summary`);
-		const data = await json<Summary>(res);
-		setSummary(data);
+		const data = await json<{ data: Summary }>(res);
+		setSummary(data.data);
 	};
 
 	const onNext = async () => {
