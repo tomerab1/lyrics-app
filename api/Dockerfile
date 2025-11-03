@@ -11,6 +11,6 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o server ./cmd
 FROM gcr.io/distroless/base-debian12
 WORKDIR /app
 COPY --from=build /app/server .
-EXPOSE 8080
+EXPOSE `
 USER nonroot:nonroot
 ENTRYPOINT ["/app/server"]
