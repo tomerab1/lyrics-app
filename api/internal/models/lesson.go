@@ -15,6 +15,7 @@ type Lesson struct {
 	UserId    string       `bson:"user_id"        json:"-"`
 	SongId    string       `bson:"song_id"        json:"-"`
 	Items     []LessonItem `bson:"items"          json:"items"`
+    Answers   []LessonAnswer `bson:"answers"       json:"-"`
 	CreatedAt time.Time    `bson:"created_at"     json:"-"`
 }
 
@@ -24,4 +25,11 @@ type LessonItem struct {
 	RenderedLine string     `bson:"rendered_line"  json:"renderedLine"`
 	Words        []string   `bson:"words"          json:"words"`
 	CorrectWord  string     `bson:"correct_word" json:"correct_word"`
+}
+
+type LessonAnswer struct {
+    ItemIndex int    `bson:"item_index"`
+    Type      string `bson:"type"`          // persist only if fillblanks
+    UserInput string `bson:"user_input"`    // chosen word
+    Correct   bool   `bson:"correct"`
 }

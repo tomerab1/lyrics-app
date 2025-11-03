@@ -35,6 +35,6 @@ func getSongs(app *app.Application) http.HandlerFunc {
 			return
 		}
 
-		app.WriteJSON(w, http.StatusCreated, songs)
+        app.WriteJSON(w, http.StatusOK, songs)
 	}
 }

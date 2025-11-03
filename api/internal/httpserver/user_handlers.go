@@ -35,6 +35,6 @@ func getUsers(app *app.Application) http.HandlerFunc {
 			return
 		}
 
-		app.WriteJSON(w, http.StatusCreated, users)
+        app.WriteJSON(w, http.StatusOK, users)
 	}
 }
