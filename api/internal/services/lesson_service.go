@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log/slog"
 	"math/rand/v2"
 	"slices"
@@ -18,17 +19,20 @@ import (
 type LessonService struct {
 	songRepo   repositories.SongRepoIface
 	lessonRepo repositories.LessonRepoIface
+	userRepo   repositories.UserRepoIface
 	logger     *slog.Logger
 }
 
 var ErrDuplicateAnswer = errors.New("duplicate answer")
 
 func NewLessonService(
+	userRepo repositories.UserRepoIface,
 	songRepo repositories.SongRepoIface,
 	lessonRepo repositories.LessonRepoIface,
 	logger *slog.Logger,
 ) *LessonService {
 	return &LessonService{
+		userRepo:   userRepo,
 		songRepo:   songRepo,
 		lessonRepo: lessonRepo,
 		logger:     logger,
@@ -42,6 +46,10 @@ func (svc *LessonService) CreateLesson(
 ) (*contracts.CreateLessonResponse, error) {
 	if strings.TrimSpace(dto.UserId) == "" {
 		return nil, errors.New("userId is required")
+	}
+	if _, err := svc.userRepo.FindOne(ctx, dto.UserId); err != nil {
+		svc.logger.Info("find user failed", "err", err)
+		return nil, fmt.Errorf("user with id=%s was not found", dto.UserId)
 	}
 
 	// 1) Pick a song (random for now)

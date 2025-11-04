@@ -39,7 +39,7 @@ func New(logger *slog.Logger, dbConnString string) (*Application, error) {
 	songsSvc := services.NewSongService(songsRepo, songSvcLogger)
 
 	lessonRepo := repositories.NewLessonRepo(dbConn.Database("lyrics-app").Collection("lessons"), lessonsRepoLogger)
-	lessonSvc := services.NewLessonService(songsRepo, lessonRepo, lessonsSvcLogger)
+	lessonSvc := services.NewLessonService(userRepo, songsRepo, lessonRepo, lessonsSvcLogger)
 
 	return &Application{
 		db:        dbConn,

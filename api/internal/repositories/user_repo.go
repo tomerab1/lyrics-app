@@ -14,6 +14,7 @@ import (
 type UserRepoIface interface {
 	Create(ctx context.Context, user *models.User) (string, error)
 	FindAll(ctx context.Context) ([]*models.User, error)
+	FindOne(ctx context.Context, uuid string) (*models.User, error)
 }
 
 type UserRepoMongoImpl struct {
@@ -62,4 +63,16 @@ func (repo *UserRepoMongoImpl) FindAll(
 	}
 
 	return users, nil
+}
+
+func (repo *UserRepoMongoImpl) FindOne(
+	ctx context.Context,
+	uuid string,
+) (*models.User, error) {
+	var user models.User
+	if err := repo.coll.FindOne(ctx, bson.D{{Key: "_id", Value: uuid}}).Decode(&user); err != nil {
+		return nil, fmt.Errorf("userRepo: %w: %v", ErrFindOneFailed, err)
+	}
+
+	return &user, nil
 }
